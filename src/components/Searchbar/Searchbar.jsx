@@ -1,23 +1,48 @@
+import { Component } from 'react';
+// import { toast } from 'react-toastify';
+
 import css from './Searchbar.module.css';
 
-const Searchbar = () => {
-  return (
-    <header className={css.Searchbar}>
-      <form className={css.SearchForm}>
-        <button type="submit" className={css['SearchForm-button']}>
-          <span className={css['SearchForm-button-label']}>Search</span>
-        </button>
+class Searchbar extends Component {
+  state = {
+    valueInput: '',
+  };
+  handleValueChange = event => {
+    this.setState({ valueInput: event.currentTarget.value.toLowerCase() });
+  };
 
-        <input
-          className={css['SearchForm-input']}
-          type="text"
-          autocomplete="off"
-          autofocus
-          placeholder="Search images and photos"
-        />
-      </form>
-    </header>
-  );
-};
+  handleSubmit = event => {
+    event.preventDefault();
+    if (this.state.valueInput.trim() === '') {
+      alert('Введіть будь ласка текст');
+      return;
+    }
+    this.props.onSubmit(this.state.valueInput);
+    this.setState({ valueInput: '' });
+  };
+
+  render() {
+    return (
+      <header className={css.Searchbar}>
+        <form onSubmit={this.handleSubmit} className={css.SearchForm}>
+          <button type="submit" className={css['SearchForm-button']}>
+            <span className={css['SearchForm-button-label']}>Search</span>
+          </button>
+
+          <input
+            className={css['SearchForm-input']}
+            value={this.state.valueInput}
+            name="valueInput"
+            type="text"
+            // autocomplete="off"
+            // autofocus
+            placeholder="Search images and photos"
+            onChange={this.handleValueChange}
+          />
+        </form>
+      </header>
+    );
+  }
+}
 
 export default Searchbar;
