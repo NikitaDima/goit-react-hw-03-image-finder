@@ -1,24 +1,85 @@
 import { Component } from 'react';
-// import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toastOptions } from 'serveses/utils';
+
+import { getImages } from '../serveses/api';
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
-    valueInput: '',
+    searchQuery: '',
+    page: 1,
+    hits: [],
+    totalHits: 0,
+    largeImageURL: '',
+    loading: false,
   };
 
+  componentDidUpdate(_, prevState) {
+    const { searchQuery, page } = this.state;
+    if (searchQuery !== prevState.searchQuery || prevState.page !== page) {
+      this.setState({ loading: true });
+      getImages(searchQuery, page)
+        .then(({ hits: newHits, totalHits }) => {
+          if (this.state.searchQuery.trim() === '' || totalHits === 0) {
+            toast.error('Введіть валідне значення', toastOptions);
+            return;
+          }
+          if (
+            (prevState.hits.length !== 0 && newHits.length < 12) ||
+            (prevState.hits.length === 0 && newHits.length === totalHits)
+          ) {
+            toast.info('Більше немає картинок', toastOptions);
+          }
+          this.setState(prevState => ({
+            hits: [...prevState.hits, ...newHits],
+            totalHits,
+          }));
+        })
+        .catch(error => console.error(error.response))
+        .finally(() => {
+          this.setState({ loading: false });
+        });
+    }
+  }
+
   handleFormSubmit = valueInput => {
-    this.setState({ valueInput });
+    this.setState({ searchQuery: valueInput, page: 1, hits: [], totalHits: 0 });
+  };
+
+  handleLoadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
+
+  toggleModal = (largeImageURL = '') => {
+    this.setState({ largeImageURL: largeImageURL });
   };
 
   render() {
+    const { largeImageURL, hits, loading, totalHits } = this.state;
+    const showLoadMoreButton = !loading && hits.length !== totalHits;
     return (
       <>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery />
-        <Button />
+        {hits.length > 0 && (
+          <ImageGallery images={hits} handleClick={this.toggleModal} />
+        )}
+        {showLoadMoreButton && (
+          <Button onClick={this.handleLoadMore} disabled={loading} />
+        )}
+
+        {largeImageURL && (
+          <Modal onClouse={this.toggleModal}>
+            <img src={largeImageURL} alt="" />
+          </Modal>
+        )}
+        <ToastContainer />
       </>
     );
   }

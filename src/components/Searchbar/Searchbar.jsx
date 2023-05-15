@@ -13,10 +13,6 @@ class Searchbar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    if (this.state.valueInput.trim() === '') {
-      alert('Введіть будь ласка текст');
-      return;
-    }
     this.props.onSubmit(this.state.valueInput);
     this.setState({ valueInput: '' });
   };

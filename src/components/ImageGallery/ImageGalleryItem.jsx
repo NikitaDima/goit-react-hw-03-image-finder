@@ -1,8 +1,8 @@
 import css from './ImageGallery.module.css';
-const ImageGalleryItem = () => {
+const ImageGalleryItem = ({ webformatURL, onClick, tags }) => {
   return (
     <li className={css.ImageGalleryItem}>
-      <img src="" alt="" />
+      <img src={webformatURL} alt={tags} onClick={onClick} />
     </li>
   );
 };
