@@ -1,13 +1,14 @@
 import { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { toastOptions } from 'serveses/utils';
-
+import { toastOptions, audioOptions } from 'serveses/utils';
+import { Audio } from 'react-loader-spinner';
 import { getImages } from '../serveses/api';
+
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
-import { Modal } from './Modal/Modal';
+import Modal from './Modal';
 
 export class App extends Component {
   state = {
@@ -65,7 +66,14 @@ export class App extends Component {
     const { largeImageURL, hits, loading, totalHits } = this.state;
     const showLoadMoreButton = !loading && hits.length !== totalHits;
     return (
-      <>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr',
+          gridGap: '16px',
+          paddingBottom: '24px',
+        }}
+      >
         <Searchbar onSubmit={this.handleFormSubmit} />
         {hits.length > 0 && (
           <ImageGallery images={hits} handleClick={this.toggleModal} />
@@ -73,14 +81,14 @@ export class App extends Component {
         {showLoadMoreButton && (
           <Button onClick={this.handleLoadMore} disabled={loading} />
         )}
-
+        {loading && <Audio {...audioOptions}></Audio>}
         {largeImageURL && (
-          <Modal onClouse={this.toggleModal}>
+          <Modal onClose={this.toggleModal}>
             <img src={largeImageURL} alt="" />
           </Modal>
         )}
         <ToastContainer />
-      </>
+      </div>
     );
   }
 }

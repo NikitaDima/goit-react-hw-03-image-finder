@@ -7,3 +7,13 @@ export const toastOptions = {
   draggable: true,
   theme: 'light',
 };
+
+export const audioOptions = {
+  height: '80',
+  width: '80',
+  radius: '9',
+  color: 'green',
+  ariaLabel: 'three-dots-loading',
+  wrapperStyle: {},
+  wrapperClass: '',
+};

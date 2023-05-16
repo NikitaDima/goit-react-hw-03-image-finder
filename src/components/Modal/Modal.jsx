@@ -1,9 +1,10 @@
 import { Component } from 'react';
 import { createPortal } from 'react-dom';
-
+import PropTypes from 'prop-types';
+import css from './Modal.module.css';
 const modalRoot = document.querySelector('#modal-root');
 
-export class Modal extends Component {
+class Modal extends Component {
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
     document.body.style.overflow = 'hidden';
@@ -26,10 +27,16 @@ export class Modal extends Component {
   };
   render() {
     return createPortal(
-      <div class="overlay" onClick={this.handleBackDropClick}>
-        <div class="modal">{this.props.children}</div>
+      <div className={css.Overlay} onClick={this.handleBackDropClick}>
+        <div className={css.Modal}>{this.props.children}</div>
       </div>,
       modalRoot
     );
   }
 }
+
+export default Modal;
+
+Modal.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
