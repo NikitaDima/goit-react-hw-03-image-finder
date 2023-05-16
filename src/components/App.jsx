@@ -49,6 +49,9 @@ export class App extends Component {
   }
 
   handleFormSubmit = valueInput => {
+    if (this.state.searchQuery === valueInput) {
+      return;
+    }
     this.setState({ searchQuery: valueInput, page: 1, hits: [], totalHits: 0 });
   };
 
